@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>NLog.AzureStorage</id>
+        <version>0.1.0.0</version>
+        <title>NLog.AzureStorage</title>
+        <authors>Nick Heppleston</authors>
+        <owners>Nick Heppleston</owners>
+        <projectUrl>https://github.com/nickheppleston/NLog.AzureStorage</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Custom NLog Target for sending logs to Azure Storage Blobs</description>
+        <copyright>Copyright © 2015</copyright>
+        <language>en-GB</language>
+        <tags>nlog target azure storage blob</tags>
+        <dependencies>
+            <dependency id="NLog" version="4.1.1" />
+            <dependency id="WindowsAzure.Storage" version="5.0.2" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="bin\Debug\NLog.AzureStorage.dll" target="lib\net45\NLog.AzureStorage.dll" />
+    </files>
+</package>
