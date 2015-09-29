@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLog.AzureStorage", "NLog.AzureStorage\NLog.AzureStorage.csproj", "{22171378-C106-401A-9CFA-CB34540D742D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLog.AzureStorage.Tests", "NLog.AzureStorage.Tests\NLog.AzureStorage.Tests.csproj", "{3D8A4BD5-CD4B-442F-8EE7-99BF069142DA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{22171378-C106-401A-9CFA-CB34540D742D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22171378-C106-401A-9CFA-CB34540D742D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22171378-C106-401A-9CFA-CB34540D742D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22171378-C106-401A-9CFA-CB34540D742D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D8A4BD5-CD4B-442F-8EE7-99BF069142DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D8A4BD5-CD4B-442F-8EE7-99BF069142DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D8A4BD5-CD4B-442F-8EE7-99BF069142DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D8A4BD5-CD4B-442F-8EE7-99BF069142DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
