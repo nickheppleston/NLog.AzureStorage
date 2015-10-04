@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using System.Threading;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
@@ -10,9 +11,9 @@ namespace NLog.AzureStorage.Tests.Helpers
     {
         private CloudBlobClient _cloudBlobClient;
 
-        public AzureStorageBlobHelpers()
+        public AzureStorageBlobHelpers(string storageConnectionString)
         {
-            var cloudStorageAccount = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["AzureStorageConnectionString"].ConnectionString);
+            var cloudStorageAccount = CloudStorageAccount.Parse(storageConnectionString);
 
             _cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
         }
@@ -21,21 +22,11 @@ namespace NLog.AzureStorage.Tests.Helpers
         {
             var container = _cloudBlobClient.GetContainerReference(containerName);
 
-            container.DeleteIfExists();
+            if (container.Exists())
+            {
+                container.Delete();
+            }
         }
-
-        //public void DeleteAllAppendBlobs(string containerName)
-        //{
-        //    var container = _cloudBlobClient.GetContainerReference(containerName);
-
-        //    foreach (var blobItem in container.ListBlobs())
-        //    {
-        //        var blob = container.GetAppendBlobReference(
-
-        //        container.blob
-        //    }
-
-        //}
 
         public bool StorageContainerExists(string containerName)
         {
