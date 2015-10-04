@@ -59,13 +59,12 @@ namespace NLog.AzureStorage
                         _blobContainer.Create();
 
                         while (!_blobContainer.Exists())
-                        {
                             Thread.Sleep(100);
-                        }
                     }
                     catch (StorageException storageException)
                     {
-                        Trace.TraceError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Blob Container '{0}' - Storage Exception: {1}", StorageContainerName, storageException.Message));
+                        Trace.TraceError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Blob Container '{0}' - Storage Exception: {1} {2}", StorageContainerName, storageException.Message, GetStorageExceptionHttpStatusMessage(storageException)));
+                        throw;
                     }
                 }
             }
@@ -85,7 +84,8 @@ namespace NLog.AzureStorage
                     }
                     catch (StorageException storageException)
                     {
-                        Trace.TraceError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Append Blob '{0}' in the Container '{1}' - Storage Exception: {2}", StorageBlobName, StorageContainerName, storageException.Message));
+                        Trace.TraceError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Append Blob '{0}' in the Container '{1}' - Storage Exception: {2} {3}", StorageBlobName, StorageContainerName, storageException.Message, GetStorageExceptionHttpStatusMessage(storageException)));
+                        throw;
                     }
                 }
             }
@@ -104,6 +104,16 @@ namespace NLog.AzureStorage
             var containerNameInvalidCharactersRemoved = Regex.Replace(containerName, "[^abcdefghijklmnopqrstuvwxyz0123456789-]", String.Empty, RegexOptions.IgnoreCase);
 
             return (containerNameInvalidCharactersRemoved.ToLower());
+        }
+
+        private static string GetStorageExceptionHttpStatusMessage(StorageException storageException)
+        {
+            var storageRequestInfo = storageException.RequestInformation;
+
+            if (storageRequestInfo == null)
+                return (string.Empty);
+
+            return (storageRequestInfo.HttpStatusMessage);
         }
     }
 }
