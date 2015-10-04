@@ -27,8 +27,6 @@ namespace NLog.AzureStorage
 
                 var logMessage = String.Concat(Layout.Render(logEvent), Environment.NewLine);
 
-                Trace.WriteLine(String.Format("NLog.AzureStorage - {0}/{1} - Formatted Log Message: {2}", StorageContainerName, StorageBlobName, logMessage));
-
                 _azureBlobStorageProxy.WriteTextToBlob(logMessage);
             }
         }
