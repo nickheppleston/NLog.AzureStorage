@@ -109,5 +109,22 @@ namespace NLog.AzureStorage.Tests
             Assert.IsTrue(storageBlobHelpers.StorageAppendBlobExists(storageContainerName, AzureStorageBlobHelpers.FormatBlobName(storageBlobName)), "Missing Storage Blob");
             Assert.IsTrue(storageBlobHelpers.StorageAppendBlobWithTextExists(storageContainerName, AzureStorageBlobHelpers.FormatBlobName(storageBlobName), expectedLogMessage), "Missing Log Message");
         }
+
+        [Test]
+        public void Log_Multiple_Info()
+        {
+            // Setup - None
+
+            // Execution
+            logger.Info(String.Format("This is a test log message from NLog @ {0}", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.ffff")));
+            logger.Info(String.Format("This is a test log message from NLog @ {0}", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.ffff")));
+            logger.Info(String.Format("This is a test log message from NLog @ {0}", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.ffff")));
+            logger.Info(String.Format("This is a test log message from NLog @ {0}", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.ffff")));
+            logger.Info(String.Format("This is a test log message from NLog @ {0}", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.ffff")));
+
+            // Assertion
+            Assert.IsTrue(storageBlobHelpers.StorageContainerExists(storageContainerName), "Missing Storage Container");
+            Assert.IsTrue(storageBlobHelpers.StorageAppendBlobExists(storageContainerName, AzureStorageBlobHelpers.FormatBlobName(storageBlobName)), "Missing Storage Blob");
+        }
     }
 }

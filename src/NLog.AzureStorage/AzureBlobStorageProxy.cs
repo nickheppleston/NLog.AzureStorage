@@ -6,6 +6,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Net;
 
 namespace NLog.AzureStorage
 {
@@ -20,11 +21,24 @@ namespace NLog.AzureStorage
 
         public string StorageBlobName { get; private set; }
 
+        internal string FormattedStorageContainerName { get; private set; }
+
+        internal string FormattedStorageBlobName { get; private set; }
+
         public AzureBlobStorageProxy(string storageConnectionString, string storageContainerName, string storageBlobName)
         {
             StorageConnectionString = storageConnectionString;
-            StorageContainerName = FormatContainerName(storageContainerName);
-            StorageBlobName = FormatBlobName(storageBlobName);
+            StorageContainerName = storageContainerName;
+            StorageBlobName = storageBlobName;
+
+            FormattedStorageContainerName = FormatContainerName(storageContainerName);
+            FormattedStorageBlobName = FormatBlobName(storageBlobName);
+
+            Trace.WriteLine(String.Format("NLog.AzureStorage - StorageConnectionString: {0}", StorageConnectionString));
+            Trace.WriteLine(String.Format("NLog.AzureStorage - StorageContainerName:    {0}", StorageContainerName));
+            Trace.WriteLine(String.Format("NLog.AzureStorage - StorageBlobName:         {0}", StorageBlobName));
+            Trace.WriteLine(String.Format("NLog.AzureStorage - (Internal) FormattedStorageContainerName:  {0}", FormattedStorageContainerName));
+            Trace.WriteLine(String.Format("NLog.AzureStorage - (Internal) FormattedStorageBlobName:       {0}", FormattedStorageBlobName));
         }
 
         public void WriteTextToBlob(string text)
@@ -50,7 +64,7 @@ namespace NLog.AzureStorage
                 var cloudStorageAccount = CloudStorageAccount.Parse(StorageConnectionString);
                 var cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
 
-                _blobContainer = cloudBlobClient.GetContainerReference(StorageContainerName);
+                _blobContainer = cloudBlobClient.GetContainerReference(FormattedStorageContainerName);
 
                 if (!_blobContainer.Exists())
                 {
@@ -63,7 +77,7 @@ namespace NLog.AzureStorage
                     }
                     catch (StorageException storageException)
                     {
-                        Trace.TraceError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Blob Container '{0}' - Storage Exception: {1} {2}", StorageContainerName, storageException.Message, GetStorageExceptionHttpStatusMessage(storageException)));
+                        Trace.TraceError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Blob Container '{0}' - Storage Exception: {1} {2}", FormattedStorageContainerName, storageException.Message, GetStorageExceptionHttpStatusMessage(storageException)));
                         throw;
                     }
                 }
@@ -74,7 +88,7 @@ namespace NLog.AzureStorage
         {
             if (_appendBlob == null)
             {
-                _appendBlob = _blobContainer.GetAppendBlobReference(StorageBlobName);
+                _appendBlob = _blobContainer.GetAppendBlobReference(FormattedStorageBlobName);
 
                 if (!_appendBlob.Exists())
                 {
@@ -84,7 +98,7 @@ namespace NLog.AzureStorage
                     }
                     catch (StorageException storageException)
                     {
-                        Trace.TraceError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Append Blob '{0}' in the Container '{1}' - Storage Exception: {2} {3}", StorageBlobName, StorageContainerName, storageException.Message, GetStorageExceptionHttpStatusMessage(storageException)));
+                        Trace.TraceError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Append Blob '{0}' in the Container '{1}' - Storage Exception: {2} {3}", FormattedStorageBlobName, FormattedStorageContainerName, storageException.Message, GetStorageExceptionHttpStatusMessage(storageException)));
                         throw;
                     }
                 }

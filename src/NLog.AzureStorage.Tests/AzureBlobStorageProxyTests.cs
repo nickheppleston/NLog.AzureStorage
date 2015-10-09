@@ -53,7 +53,7 @@ namespace NLog.AzureStorage.Tests
             var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName);
 
             // Assertion
-            Assert.AreEqual(containerName.ToLower(), azureBlobStorageProxy.StorageContainerName);
+            Assert.AreEqual(containerName.ToLower(), azureBlobStorageProxy.FormattedStorageContainerName); // Use the (internal) formatted Container Name
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace NLog.AzureStorage.Tests
             var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName);
 
             // Assertion
-            Assert.AreEqual("containername", azureBlobStorageProxy.StorageContainerName);
+            Assert.AreEqual("containername", azureBlobStorageProxy.FormattedStorageContainerName); // Use the (internal) formatted Container Name
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace NLog.AzureStorage.Tests
             var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName);
 
             // Assertion
-            Assert.AreEqual(containerName.ToLower(), azureBlobStorageProxy.StorageContainerName);
+            Assert.AreEqual(containerName.ToLower(), azureBlobStorageProxy.FormattedStorageContainerName); // Use the (internal) formatted Container Name
         }
 
         #endregion
