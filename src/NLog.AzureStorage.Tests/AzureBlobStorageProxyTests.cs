@@ -6,6 +6,8 @@ namespace NLog.AzureStorage.Tests
     [TestFixture]
     public class AzureBlobStorageProxyTests
     {
+        private static bool enableDebug = true;
+
         #region Container Name Formatting Tests
 
         // Container names may only contain lowercase letters, numbers, and hyphens and must start with a letter or number.
@@ -20,7 +22,7 @@ namespace NLog.AzureStorage.Tests
             var storageBlobName = String.Empty;
 
             // Execution
-            var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName);
+            var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName, enableDebug);
 
             // Assertion
             Assert.AreEqual(containerName, azureBlobStorageProxy.StorageContainerName);
@@ -35,7 +37,7 @@ namespace NLog.AzureStorage.Tests
             var storageBlobName = String.Empty;
 
             // Execution
-            var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName);
+            var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName, enableDebug);
 
             // Assertion
             Assert.AreEqual(containerName, azureBlobStorageProxy.StorageContainerName);
@@ -50,7 +52,7 @@ namespace NLog.AzureStorage.Tests
             var storageBlobName = String.Empty;
 
             // Execution
-            var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName);
+            var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName, enableDebug);
 
             // Assertion
             Assert.AreEqual(containerName.ToLower(), azureBlobStorageProxy.FormattedStorageContainerName); // Use the (internal) formatted Container Name
@@ -65,7 +67,7 @@ namespace NLog.AzureStorage.Tests
             var storageBlobName = String.Empty;
 
             // Execution
-            var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName);
+            var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName, enableDebug);
 
             // Assertion
             Assert.AreEqual("containername", azureBlobStorageProxy.FormattedStorageContainerName); // Use the (internal) formatted Container Name
@@ -80,7 +82,7 @@ namespace NLog.AzureStorage.Tests
             var storageBlobName = String.Empty;
 
             // Execution
-            var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName);
+            var azureBlobStorageProxy = new AzureBlobStorageProxy(connectionString, containerName, storageBlobName, enableDebug);
 
             // Assertion
             Assert.AreEqual(containerName.ToLower(), azureBlobStorageProxy.FormattedStorageContainerName); // Use the (internal) formatted Container Name

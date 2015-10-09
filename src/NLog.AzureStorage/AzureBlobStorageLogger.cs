@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.ComponentModel;
 using NLog.Config;
 using NLog.Targets;
 
@@ -19,6 +19,9 @@ namespace NLog.AzureStorage
         [RequiredParameter]
         public string StorageBlobName { get; set; }
 
+        [DefaultValue(false)]
+        public bool EnableDebug { get; set; }
+
         protected override void Write(LogEventInfo logEvent)
         {
             if (!string.IsNullOrEmpty(logEvent.Message))
@@ -35,17 +38,31 @@ namespace NLog.AzureStorage
         {
             if (_azureBlobStorageProxy == null)
             {
-                _azureBlobStorageProxy = new AzureBlobStorageProxy(StorageConnectionString, StorageContainerName, StorageBlobName);
+                _azureBlobStorageProxy = new AzureBlobStorageProxy(StorageConnectionString, StorageContainerName, StorageBlobName, EnableDebug);
             }
             else
             {
-                // Handle the LogManager.ReconfigExistingLoggers() scenario - this feels clunky and could probably be made better
-                if ((_azureBlobStorageProxy.StorageConnectionString != StorageConnectionString) || (_azureBlobStorageProxy.StorageContainerName != StorageContainerName) || (_azureBlobStorageProxy.StorageBlobName != StorageBlobName))
+                // Handle the LogManager.ReconfigExistingLoggers() scenario - this feels clunky and could probably be made better - 
+                // unfortunately, there doesn't appear to be an effective way to detect whether this method has been called.
+                if (LogTargetConfigurationChanged())
                 {
                     _azureBlobStorageProxy = null;
-                    _azureBlobStorageProxy = new AzureBlobStorageProxy(StorageConnectionString, StorageContainerName, StorageBlobName);
+                    _azureBlobStorageProxy = new AzureBlobStorageProxy(StorageConnectionString, StorageContainerName, StorageBlobName, EnableDebug);
                 }
             }
+        }
+
+        private bool LogTargetConfigurationChanged()
+        {
+            if ((_azureBlobStorageProxy.StorageConnectionString != StorageConnectionString) || 
+                (_azureBlobStorageProxy.StorageContainerName != StorageContainerName) || 
+                (_azureBlobStorageProxy.StorageBlobName != StorageBlobName) ||
+                (_azureBlobStorageProxy.EnableDebug != EnableDebug))
+            {
+                return (true);
+            }
+
+            return (false);
         }
     }
 }
