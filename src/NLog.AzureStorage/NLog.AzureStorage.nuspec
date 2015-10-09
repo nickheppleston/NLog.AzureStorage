@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>NLog.AzureStorage</id>
-    <version>0.3.0.0</version>
+    <version>0.4.0.0</version>
     <title>NLog.AzureStorage</title>
     <authors>Nick Heppleston</authors>
     <owners>Nick Heppleston</owners>
@@ -13,7 +13,7 @@
     <copyright>Copyright © 2015</copyright>
     <language>en-GB</language>
     <tags>nlog target azure storage blob</tags>
-    <releaseNotes>Improved exception handling when errors thrown by Azure Storage; general code clean-up.</releaseNotes>
+    <releaseNotes>Corrected performance issues and added debugging functionality (disabled by default).</releaseNotes>
     <dependencies>
       <dependency id="NLog" version="4.1.1" />
       <dependency id="WindowsAzure.Storage" version="5.0.2" />
