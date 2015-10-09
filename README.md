@@ -38,10 +38,9 @@ Add the assembly and new target to NLog.config:
       <targets>
         <target xsi:type="AzureBlobStorageLogger"
             name="BlobStorageLogger"
-            StorageConnectionString="[AZURE STORAGE CONNECTION STRING]" 
-            StorageContainerName="nlog-storage-test" 
-            StorageBlobName="nlog-storage-test.txt" 
-            layout="${message}"
+            storageConnectionString="[AZURE STORAGE CONNECTION STRING]" 
+            storageContainerName="nlog-storage-test" 
+            storageBlobName="nlog-storage-test.txt" 
           />
       </targets>
 
@@ -49,7 +48,33 @@ Add the assembly and new target to NLog.config:
         <logger name="*" minlevel="Trace" writeTo="BlobStorageLogger" />
       </rules>
   
-Note:  the only required property for the target is the *storageConnectionString*.  The target will default *storageContainerName*, *storageBlobName*, and *layout* properties if not populated in the configuration.
+Note:  the only required properties for the target are *storageConnectionString*, *storageContainerName* and *storageBlobName*.
+
+## Debugging
+
+By default, no debugging information will be generated when the custom Log Target is used. If you require debug information, this can be enabled by setting the *enableDebug* property to 'true' within the log target configuration as follows:
+
+        <target xsi:type="AzureBlobStorageLogger"
+            name="BlobStorageLogger"
+            storageConnectionString="[AZURE STORAGE CONNECTION STRING]" 
+            storageContainerName="nlog-storage-test" 
+            storageBlobName="nlog-storage-test.txt"
+            enableDebug="true"
+          />
+
+With debugging enable, you will see trace messages similar to the following (use [DebugView](https://technet.microsoft.com/en-us/library/bb896647.aspx) or something similar to view the traces):
+
+	INFO: NLog.AzureStorage - StorageConnectionString: [AZURE STORAGE CONNECTION STRING] 
+	INFO: NLog.AzureStorage - StorageContainerName:    nlog-storage-test
+	INFO: NLog.AzureStorage - StorageBlobName:         nlog-storage-test.txt
+	INFO: NLog.AzureStorage - EnableDebug:             True
+	INFO: NLog.AzureStorage - (Internal) FormattedStorageContainerName:  nlog-storage-test
+	INFO: NLog.AzureStorage - (Internal) FormattedStorageBlobName:       nlog-storage-test-09-10-2015.txt
+	INFO: NLog.AzureStorage - nlog-storage-test/nlog-storage-test.txt - Successfully wrote bytes: 143
+	INFO: NLog.AzureStorage - nlog-storage-test/nlog-storage-test.txt - Successfully wrote bytes: 256
+	INFO: NLog.AzureStorage - nlog-storage-test/nlog-storage-test.txt - Successfully wrote bytes: 189
+
+For each log message written to Azure Blob Storage, a corresponding '*Successfully wrote bytes: XXX*' line will be output, as shown in the last three lines.
 
 ## Feedback
 
