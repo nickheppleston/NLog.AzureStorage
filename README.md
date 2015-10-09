@@ -8,7 +8,7 @@ NLog.AzureStorage is an [Microsoft Azure Storage](https://azure.microsoft.com/en
 
 ## Getting Started
 
-See the included samples at [NLog.AzureStorage.Samples.WebAPI](https://github.com/nickheppleston/NLog.AzureStorage/tree/master/src/NLog.AzureStorage.Samples.WebAPI) and [TODO](Cloud Service Worker Role) for examples of running the NLog.AzureStorage Target and having log file output appearing in Azure Blob Storage.
+See the included sample at [NLog.AzureStorage.Samples.WebAPI](https://github.com/nickheppleston/NLog.AzureStorage/tree/master/src/NLog.AzureStorage.Samples.WebAPI) for examples of running the NLog.AzureStorage Target and having log file output appearing in Azure Blob Storage.
 
 To add to your own projects do the following:
 
