@@ -12,9 +12,11 @@ See the included sample at [NLog.AzureStorage.Samples.WebAPI](https://github.com
 
 To add to your own projects do the following:
 
-#### Add NLog.AzureStorage.dll to your project(s) via [NuGet](https://www.nuget.org/packages/NLog.AzureStorage/)
+#### Add NLog.AzureStorage.dll to your project(s) via NuGet
 
 	> install-package NLog.AzureStorage
+
+You can view the package at [https://www.nuget.org/packages/NLog.AzureStorage/](https://www.nuget.org/packages/NLog.AzureStorage/)
 
 NLog.AzureStorage has dependencies on the following NuGet Packages:
 
