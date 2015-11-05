@@ -23,51 +23,61 @@ namespace NLog.AzureStorage
 
         public bool EnableDebug { get; private set; }
 
-        internal string FormattedStorageContainerName { get; private set; }
-
-        internal string FormattedStorageBlobName { get; private set; }
-
         public AzureBlobStorageProxy(string storageConnectionString, string storageContainerName, string storageBlobName, bool enableDebug)
         {
             StorageConnectionString = storageConnectionString;
             StorageContainerName = storageContainerName;
             StorageBlobName = storageBlobName;
             EnableDebug = enableDebug;
-            FormattedStorageContainerName = FormatContainerName(storageContainerName);
-            FormattedStorageBlobName = FormatBlobName(storageBlobName);
 
             WriteDebugInfo(String.Format("NLog.AzureStorage - StorageConnectionString: {0}", StorageConnectionString));
             WriteDebugInfo(String.Format("NLog.AzureStorage - StorageContainerName:    {0}", StorageContainerName));
             WriteDebugInfo(String.Format("NLog.AzureStorage - StorageBlobName:         {0}", StorageBlobName));
             WriteDebugInfo(String.Format("NLog.AzureStorage - EnableDebug:             {0}", EnableDebug));
-            WriteDebugInfo(String.Format("NLog.AzureStorage - (Internal) FormattedStorageContainerName:  {0}", FormattedStorageContainerName));
-            WriteDebugInfo(String.Format("NLog.AzureStorage - (Internal) FormattedStorageBlobName:       {0}", FormattedStorageBlobName));
         }
 
         public void WriteTextToBlob(string text)
         {
+            var formattedStorageContainerName = FormatContainerName(StorageContainerName);
+            var formattedStorageBlobName = FormatBlobName(StorageBlobName);
+
             if (!string.IsNullOrEmpty(text))
             {
-                InstanciateStorageContainer();
-                InstanciateStorageBlob();
+                InstanciateStorageContainer(formattedStorageContainerName);
+                InstanciateStorageBlob(formattedStorageContainerName, formattedStorageBlobName);
 
                 using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(text)))
                 {
-                    WriteDebugInfo(String.Format("NLog.AzureStorage - {0}/{1} - Successfully wrote bytes: {2}", StorageContainerName, StorageBlobName, memoryStream.Length));
+                    WriteDebugInfo(String.Format("NLog.AzureStorage - {0}/{1} - Successfully wrote bytes: {2}", formattedStorageContainerName, formattedStorageBlobName, memoryStream.Length));
 
                     _appendBlob.AppendBlock(memoryStream);
                 }
             }
         }
 
-        private void InstanciateStorageContainer()
+        internal static string FormatBlobName(string blobName)
         {
-            if (_blobContainer == null)
+            return (String.Format("{0}-{1}{2}", Path.GetFileNameWithoutExtension(blobName), DateTime.Now.ToString("dd-MM-yyyy"), Path.GetExtension(blobName)));
+        }
+
+        internal static string FormatContainerName(string containerName)
+        {
+            // Container names may only contain lowercase letters, numbers, and hyphens and must start with a letter or number.
+            // The name cannot contain two consecutive hyphens. The name must also be between 3 and 63 characters long.
+
+            var containerNameInvalidCharactersRemoved = Regex.Replace(containerName, "[^abcdefghijklmnopqrstuvwxyz0123456789-]", String.Empty, RegexOptions.IgnoreCase);
+
+            return (containerNameInvalidCharactersRemoved.ToLower());
+        }
+
+        private void InstanciateStorageContainer(string formattedStorageContainerName)
+        {
+            if ((_blobContainer == null) || (_blobContainer.Name != formattedStorageContainerName))
             {
                 var cloudStorageAccount = CloudStorageAccount.Parse(StorageConnectionString);
                 var cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
 
-                _blobContainer = cloudBlobClient.GetContainerReference(FormattedStorageContainerName);
+                _blobContainer = cloudBlobClient.GetContainerReference(formattedStorageContainerName);
 
                 if (!_blobContainer.Exists())
                 {
@@ -80,18 +90,18 @@ namespace NLog.AzureStorage
                     }
                     catch (StorageException storageException)
                     {
-                        WriteDebugError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Blob Container '{0}' - Storage Exception: {1} {2}", FormattedStorageContainerName, storageException.Message, GetStorageExceptionHttpStatusMessage(storageException)));
+                        WriteDebugError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Blob Container '{0}' - Storage Exception: {1} {2}", formattedStorageContainerName, storageException.Message, GetStorageExceptionHttpStatusMessage(storageException)));
                         throw;
                     }
                 }
             }
         }
 
-        private void InstanciateStorageBlob()
+        private void InstanciateStorageBlob(string formattedStorageContainerName, string formattedStorageBlobName)
         {
-            if (_appendBlob == null)
+            if ((_appendBlob == null) || (_appendBlob.Name != formattedStorageBlobName))
             {
-                _appendBlob = _blobContainer.GetAppendBlobReference(FormattedStorageBlobName);
+                _appendBlob = _blobContainer.GetAppendBlobReference(formattedStorageBlobName);
 
                 if (!_appendBlob.Exists())
                 {
@@ -101,26 +111,11 @@ namespace NLog.AzureStorage
                     }
                     catch (StorageException storageException)
                     {
-                        WriteDebugError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Append Blob '{0}' in the Container '{1}' - Storage Exception: {2} {3}", FormattedStorageBlobName, FormattedStorageContainerName, storageException.Message, GetStorageExceptionHttpStatusMessage(storageException)));
+                        WriteDebugError(String.Format("NLog.AzureStorage - Failed to create Azure Storage Append Blob '{0}' in the Container '{1}' - Storage Exception: {2} {3}", formattedStorageBlobName, formattedStorageContainerName, storageException.Message, GetStorageExceptionHttpStatusMessage(storageException)));
                         throw;
                     }
                 }
             }
-        }
-
-        private static string FormatBlobName(string blobName)
-        {
-            return (String.Format("{0}-{1}{2}", Path.GetFileNameWithoutExtension(blobName), DateTime.Now.ToString("dd-MM-yyyy"), Path.GetExtension(blobName)));
-        }
-
-        private static string FormatContainerName(string containerName)
-        {
-            // Container names may only contain lowercase letters, numbers, and hyphens and must start with a letter or number.
-            // The name cannot contain two consecutive hyphens. The name must also be between 3 and 63 characters long.
-
-            var containerNameInvalidCharactersRemoved = Regex.Replace(containerName, "[^abcdefghijklmnopqrstuvwxyz0123456789-]", String.Empty, RegexOptions.IgnoreCase);
-
-            return (containerNameInvalidCharactersRemoved.ToLower());
         }
 
         private static string GetStorageExceptionHttpStatusMessage(StorageException storageException)
